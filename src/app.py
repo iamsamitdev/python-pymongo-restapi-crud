@@ -56,7 +56,7 @@ def get_user(id):
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
     mongo.db.users.delete_one({'_id': ObjectId(id)})
-    response = jsonify({'message': 'User' + id + ' Deleted Successfully'})
+    response = jsonify({'message': f'User{id} Deleted Successfully'})
     response.status_code = 200
     return response
 
@@ -70,19 +70,16 @@ def update_user(_id):
         hashed_password = generate_password_hash(password)
         mongo.db.users.update_one(
             {'_id': ObjectId(_id['$oid']) if '$oid' in _id else ObjectId(_id)}, {'$set': {'username': username, 'email': email, 'password': hashed_password}})
-        response = jsonify({'message': 'User' + _id + 'Updated Successfuly'})
+        response = jsonify({'message': f'User{_id}Updated Successfuly'})
         response.status_code = 200
         return response
     else:
-      return not_found()
+        return not_found()
 
 
 @app.errorhandler(404)
 def not_found(error=None):
-    message = {
-        'message': 'Resource Not Found ' + request.url,
-        'status': 404
-    }
+    message = {'message': f'Resource Not Found {request.url}', 'status': 404}
     response = jsonify(message)
     response.status_code = 404
     return response
